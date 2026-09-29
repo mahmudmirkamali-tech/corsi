@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "آتیسا",
+      "hasCanvas": false,
+      "bodyTextLen": 4340,
+      "bodyTextHash": "6249e1ba7bb56b97e2ab0f92b79bfbd6c45de2bbc67e9d0efe2168a2d3accf92",
+      "bodyTextPrefix": "پرش به محتوا آتیسا ارزش قابلیت‌ها قیمت نظرات شروع ورود به فهرست ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "آتیسا",
+      "hasCanvas": false,
+      "bodyTextLen": 4288,
+      "bodyTextHash": "14ae9cff3e4e11d842cd888b997d98afbc5fd36115fb2bf240d88162666676f5",
+      "bodyTextPrefix": "پرش به محتوا آتیسا پلتفرم مدرسان فناوری‌های نوین کرسی دیجیتال مد",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}
