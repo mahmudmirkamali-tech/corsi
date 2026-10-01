@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Economy } from "@/components/landing/economy";
 import { Features } from "@/components/landing/features";
 import { SiteFooter } from "@/components/landing/footer";
 import { Hero } from "@/components/landing/hero";
@@ -6,6 +7,7 @@ import { Instructor } from "@/components/landing/instructor";
 import { MobileCta } from "@/components/landing/mobile-cta";
 import { SiteNav } from "@/components/landing/nav";
 import { Pricing } from "@/components/landing/pricing";
+import { Referral } from "@/components/landing/referral";
 import { Signup } from "@/components/landing/signup";
 import { Stories } from "@/components/landing/stories";
 import { Value } from "@/components/landing/value";
@@ -28,8 +30,10 @@ function Home() {
         <Value />
         <Features />
         <Pricing />
+        <Economy />
         <Stories />
         <Signup />
+        <Referral />
       </main>
       <SiteFooter />
       <MobileCta />

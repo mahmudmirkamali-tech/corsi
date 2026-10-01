@@ -1,5 +1,5 @@
 import { Logo } from "@/components/landing/logo";
-import { FOUNDER, NAV_LINKS } from "@/lib/site";
+import { FOUNDER, NAV_LINKS, PAYMENT } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -8,7 +8,8 @@ export function SiteFooter() {
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            کرسی دیجیتال {FOUNDER.shortName} برای مدرسان هوش مصنوعی، بلاک‌چین و رشد کسب‌وکارهای آنلاین.
+            شبکه مربی آنلاین با پشتیبان شهر کیش. هر ساعت ۵ دوتو: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه — روی{" "}
+            {PAYMENT.chain}.
           </p>
         </div>
         <div>
@@ -29,7 +30,7 @@ export function SiteFooter() {
         <div>
           <p className="text-sm font-medium">ارتباط</p>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>{FOUNDER.city}</li>
+            <li>پشتیبان شهر {FOUNDER.city}</li>
             <li>
               <a href={`mailto:${FOUNDER.email}`} className="hover:text-foreground" dir="ltr">
                 {FOUNDER.email}
@@ -45,7 +46,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border">
         <p className="mx-auto max-w-6xl px-5 py-5 text-xs text-muted-foreground">
-          © ۱۴۰۵ آتیسا · {FOUNDER.name}
+          © ۱۴۰۵ آتیسا · {FOUNDER.name} · معلم و پشتیبان شهر کیش
         </p>
       </div>
     </footer>

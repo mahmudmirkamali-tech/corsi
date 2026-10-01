@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PLANS } from "@/lib/site";
+import { PAYMENT, PLANS } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Pricing() {
@@ -9,11 +9,10 @@ export function Pricing() {
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
         <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۳ — قیمت‌گذاری</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          از یک درس آزمایشی تا همراهی رشد دیجیتال.
+          ساعتی {PAYMENT.hourly} {PAYMENT.coin}، روی {PAYMENT.chain}.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          طرح رایگان برای شروع. کرسی برای تدریس و مشاوره تمام‌وقت. دانشکده برای تیم و مدیر امور دیجیتال.
-          هر طرح را می‌توانید ماهانه لغو کنید.
+          یک نرخ برای همه جلسه‌ها. بسته فقط ضریب ساعت است. از هر ۵ دوتو: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه.
         </p>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
@@ -30,9 +29,7 @@ export function Pricing() {
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-lg font-semibold">{plan.name}</h3>
                 {plan.featured ? (
-                  <span className="rounded-full bg-ink-foreground/10 px-3 py-1 text-xs">
-                    پرکاربرد
-                  </span>
+                  <span className="rounded-full bg-ink-foreground/10 px-3 py-1 text-xs">منتخب</span>
                 ) : null}
               </div>
               <p className="mt-6 flex items-end gap-1">

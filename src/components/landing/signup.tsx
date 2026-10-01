@@ -3,21 +3,68 @@ import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FOUNDER, ROLES, WAITLIST_KEY } from "@/lib/site";
+import { CITIES, FOUNDER, PAYMENT, SUBJECTS } from "@/lib/site";
+import { saveCoach, saveRequest } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
-type Status = "idle" | "error" | "done";
+type Tab = "learner" | "coach";
+type Status = "idle" | "error" | "done-learner" | "done-coach";
 
 function isEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function SelectField({
+  id,
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: readonly string[];
+}) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="flex h-11 w-full rounded-md border border-border bg-background px-3 text-base text-foreground focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
 export function Signup() {
+  const [tab, setTab] = useState<Tab>("learner");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<(typeof ROLES)[number]["id"]>("lecturer");
+  const [city, setCity] = useState<string>(CITIES[0]);
+  const [subject, setSubject] = useState<string>(SUBJECTS[0]);
+  const [hours, setHours] = useState(1);
+  const [kyc, setKyc] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
+
+  function resetForm() {
+    setName("");
+    setEmail("");
+    setCity(CITIES[0]);
+    setSubject(SUBJECTS[0]);
+    setHours(1);
+    setKyc(false);
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,21 +80,26 @@ export function Signup() {
       setMessage("یک ایمیل معتبر وارد کنید.");
       return;
     }
-    const entry = {
-      name: trimmedName,
-      email: trimmedEmail,
-      role,
-      at: new Date().toISOString(),
-    };
-    try {
-      const prev = JSON.parse(localStorage.getItem(WAITLIST_KEY) ?? "[]") as unknown[];
-      const list = Array.isArray(prev) ? prev : [];
-      localStorage.setItem(WAITLIST_KEY, JSON.stringify([entry, ...list].slice(0, 50)));
-    } catch {
-      /* ignore quota */
+    if (tab === "coach" && !kyc) {
+      setStatus("error");
+      setMessage("برای ورود به صف ارجاع، احراز هویت الزامی است.");
+      return;
     }
-    setStatus("done");
+    try {
+      if (tab === "learner") {
+        saveRequest({ name: trimmedName, email: trimmedEmail, city, subject, hours });
+        setStatus("done-learner");
+      } else {
+        saveCoach({ name: trimmedName, email: trimmedEmail, city, subject });
+        setStatus("done-coach");
+      }
+    } catch {
+      setStatus("error");
+      setMessage("ثبت انجام نشد. دوباره تلاش کنید.");
+      return;
+    }
     setMessage("");
+    resetForm();
   }
 
   return (
@@ -61,12 +113,13 @@ export function Signup() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
           <div className="relative flex h-full min-h-72 flex-col justify-end p-8 text-ink-foreground md:p-10">
-            <p className="text-xs font-medium tracking-wide text-ink-foreground/70">۰۵ — شروع</p>
+            <p className="text-xs font-medium tracking-wide text-ink-foreground/70">۰۶ — درخواست</p>
             <h2 className="mt-3 max-w-sm text-3xl font-semibold tracking-tight">
-              با {FOUNDER.shortName} کرسی را این هفته باز کنید.
+              شاگرد بخواهد. مربی بپذیرد. کیش ارجاع دهد.
             </h2>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-foreground/75">
-              ایمیل بگذارید تا دسترسی ۱۴ روزه طرح کرسی برایتان باز شود. برای گفتگوی مستقیم:
+              نرخ {PAYMENT.hourly} {PAYMENT.coin} در ساعت. جلسه پس از احراز مربی و ارجاع{" "}
+              {FOUNDER.shortName}.
             </p>
             <p className="mt-4 flex flex-col gap-1 text-sm">
               <a href={`mailto:${FOUNDER.email}`} className="hover:underline" dir="ltr">
@@ -80,85 +133,138 @@ export function Signup() {
         </div>
 
         <div className="bg-surface px-5 py-12 md:px-10 md:py-16">
-          {status === "done" ? (
+          {status === "done-learner" || status === "done-coach" ? (
             <div className="flex h-full min-h-64 flex-col justify-center">
               <CheckCircle2 className="size-8 text-primary" strokeWidth={1.6} />
-              <h3 className="mt-4 text-2xl font-semibold tracking-tight">در فهرست قرار گرفتید.</h3>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight">
+                {status === "done-learner" ? "درخواست مربی ثبت شد." : "در صف احراز و ارجاع هستید."}
+              </h3>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                پیام شروع آزمایشی به ایمیل شما می‌رسد. تا آن لحظه می‌توانید قابلیت‌ها را مرور کنید یا مستقیم تماس بگیرید.
+                {status === "done-learner"
+                  ? "مربیان احرازشده در شهرهای مختلف می‌توانند اعلام آمادگی کنند. کلاس وقتی شروع می‌شود که پشتیبان کیش ارجاع دهد."
+                  : "پس از بررسی احراز هویت، محمود میرکمالی شخصاً ارجاع می‌دهد. تا آن لحظه به درخواست شاگرد وصل نمی‌شوید."}
               </p>
-              <Button asChild variant="outline" className="mt-6 w-fit">
-                <a href={`tel:${FOUNDER.phone}`}>{FOUNDER.phoneDisplay}</a>
-              </Button>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setStatus("idle");
+                    setTab(status === "done-learner" ? "coach" : "learner");
+                  }}
+                >
+                  {status === "done-learner" ? "ثبت‌نام مربی" : "درخواست مربی"}
+                </Button>
+                <Button asChild>
+                  <a href="#referral">مشاهده پنل ارجاع</a>
+                </Button>
+              </div>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
-              <div className="space-y-2">
-                <Label htmlFor="full-name">نام و نام خانوادگی</Label>
-                <Input
-                  id="full-name"
-                  name="name"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="نام شما"
-                />
+            <>
+              <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1">
+                <button
+                  type="button"
+                  className={cn(
+                    "flex min-h-11 items-center justify-center rounded-sm text-sm font-medium transition-colors duration-150",
+                    tab === "learner" ? "bg-surface text-foreground shadow-[var(--shadow-border)]" : "text-muted-foreground",
+                  )}
+                  onClick={() => {
+                    setTab("learner");
+                    setStatus("idle");
+                  }}
+                >
+                  درخواست مربی
+                </button>
+                <button
+                  type="button"
+                  className={cn(
+                    "flex min-h-11 items-center justify-center rounded-sm text-sm font-medium transition-colors duration-150",
+                    tab === "coach" ? "bg-surface text-foreground shadow-[var(--shadow-border)]" : "text-muted-foreground",
+                  )}
+                  onClick={() => {
+                    setTab("coach");
+                    setStatus("idle");
+                  }}
+                >
+                  مربی می‌شوم
+                </button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">ایمیل کاری</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  dir="ltr"
-                  className="text-start"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com"
-                />
-              </div>
-              <fieldset className="space-y-3">
-                <legend className="text-sm font-medium">نقش شما</legend>
-                <div className="grid gap-2">
-                  {ROLES.map((item) => (
-                    <label
-                      key={item.id}
-                      className={cn(
-                        "flex min-h-11 cursor-pointer items-center gap-3 rounded-md border px-3 text-sm transition-colors duration-150",
-                        role === item.id
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-background hover:bg-muted",
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name="role"
-                        value={item.id}
-                        checked={role === item.id}
-                        onChange={() => setRole(item.id)}
-                        className="size-4 accent-primary"
-                        suppressHydrationWarning
-                      />
-                      {item.label}
-                    </label>
-                  ))}
+
+              <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-5" noValidate>
+                <div className="space-y-2">
+                  <Label htmlFor="full-name">نام و نام خانوادگی</Label>
+                  <Input
+                    id="full-name"
+                    name="name"
+                    autoComplete="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="نام شما"
+                  />
                 </div>
-              </fieldset>
-              {status === "error" ? (
-                <p className="text-sm text-primary" role="alert">
-                  {message}
-                </p>
-              ) : null}
-              <Button type="submit" size="lg" className="w-full">
-                دریافت دسترسی آزمایشی
-                <ArrowLeft />
-              </Button>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                با ارسال فرم فقط برای اطلاع شروع آزمایشی با شما تماس می‌گیریم.
-              </p>
-            </form>
+                <div className="space-y-2">
+                  <Label htmlFor="email">ایمیل</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    dir="ltr"
+                    className="text-start"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@email.com"
+                  />
+                </div>
+                <SelectField id="city" label="شهر" value={city} onChange={setCity} options={CITIES} />
+                <SelectField
+                  id="subject"
+                  label={tab === "learner" ? "موضوع کلاس" : "حوزه تدریس"}
+                  value={subject}
+                  onChange={setSubject}
+                  options={SUBJECTS}
+                />
+                {tab === "learner" ? (
+                  <div className="space-y-2">
+                    <Label htmlFor="hours">ساعت مورد نیاز</Label>
+                    <Input
+                      id="hours"
+                      name="hours"
+                      type="number"
+                      min={1}
+                      max={40}
+                      value={hours}
+                      onChange={(e) => setHours(Number(e.target.value) || 1)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      جمع: {hours * PAYMENT.hourly} {PAYMENT.ticker} · مربی {hours * PAYMENT.coach}
+                    </p>
+                  </div>
+                ) : (
+                  <label className="flex min-h-11 cursor-pointer items-start gap-3 rounded-md border border-border bg-background px-3 py-3 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={kyc}
+                      onChange={(e) => setKyc(e.target.checked)}
+                      className="mt-0.5 size-4 accent-primary"
+                    />
+                    <span>
+                      احراز هویت را می‌پذیرم. بدون تأیید مدارک و ارجاع پشتیبان کیش به شاگرد وصل نمی‌شوم.
+                    </span>
+                  </label>
+                )}
+                {status === "error" ? (
+                  <p className="text-sm text-primary" role="alert">
+                    {message}
+                  </p>
+                ) : null}
+                <Button type="submit" size="lg" className="w-full">
+                  {tab === "learner" ? "ثبت درخواست مربی" : "ارسال برای احراز و ارجاع"}
+                  <ArrowLeft />
+                </Button>
+              </form>
+            </>
           )}
         </div>
       </div>

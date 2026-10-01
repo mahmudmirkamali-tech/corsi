@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FOUNDER, STATS } from "@/lib/site";
+import { FOUNDER, PAYMENT, STATS } from "@/lib/site";
 
 export function Hero() {
   return (
@@ -30,13 +30,14 @@ export function Hero() {
           </h1>
           <p className="mt-3 text-lg font-medium text-ink-foreground/90">{FOUNDER.headline}</p>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-foreground/75 md:text-lg">
-            کرسی آتیسا میز کار واحد تدریس، مشاوره خصوصی و رشد دیجیتال است. دوره، محتوا و تجربه کاربری
-            را از یک فضا اداره کنید — با نگاه مدرس دانشگاه و مجری پروژه‌های آنلاین ایران.
+            مربی آنلاین بخواهید. مربیان هر شهر پس از احراز می‌پذیرند؛ جلسه با ارجاع پشتیبان کیش قطعی
+            می‌شود. اقتصاد روشن: {PAYMENT.hourly} {PAYMENT.coin} در ساعت — ۴ برای مربی، ۰٫۵ برای کیش،
+            ۰٫۵ برای شبکه.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="inverted" size="lg">
               <a href="#signup">
-                شروع ۱۴ روزه رایگان
+                درخواست مربی
                 <ArrowLeft />
               </a>
             </Button>
@@ -46,23 +47,25 @@ export function Hero() {
               size="lg"
               className="border-ink-foreground/20 text-ink-foreground hover:bg-ink-foreground/10"
             >
-              <a href="#instructor">درباره مدرس</a>
+              <a href="#signup">ثبت‌نام مربی</a>
             </Button>
           </div>
         </div>
 
         <div className="md:col-span-6">
           <div className="relative mx-auto max-w-md">
-            <div className="rounded-xl bg-ink-foreground/8 p-2">
+            <div className="rounded-xl bg-ink-foreground/10 p-2">
               <img
                 src="/media/portrait-cinematic.jpg"
-                alt={`${FOUNDER.name}، مدرس هوش مصنوعی و بلاک‌چین`}
-                className="aspect-2/3 w-full rounded-lg object-cover object-top outline outline-1 -outline-offset-1 outline-ink-foreground/15"
+                alt={`${FOUNDER.name}، معلم و پشتیبان شهر کیش`}
+                className="w-full rounded-lg object-cover object-top outline outline-1 -outline-offset-1 outline-ink-foreground/15"
               />
             </div>
             <div className="absolute bottom-6 right-6 left-6 rounded-md bg-ink/80 px-4 py-3 text-ink-foreground">
               <p className="text-sm font-medium">{FOUNDER.shortName}</p>
-              <p className="mt-1 text-xs text-ink-foreground/70">{FOUNDER.university}</p>
+              <p className="mt-1 text-xs text-ink-foreground/70">
+                پشتیبان شهر کیش · ارجاع مربیان احرازشده
+              </p>
             </div>
           </div>
         </div>
@@ -73,9 +76,7 @@ export function Hero() {
           {STATS.map((stat) => (
             <div key={stat.label} className="px-5 py-6">
               <dt className="text-xs text-ink-foreground/55">{stat.label}</dt>
-              <dd className="mt-1 text-2xl font-semibold tabular-nums tracking-tight">
-                {stat.value}
-              </dd>
+              <dd className="mt-1 text-2xl font-semibold tabular-nums tracking-tight">{stat.value}</dd>
             </div>
           ))}
         </dl>

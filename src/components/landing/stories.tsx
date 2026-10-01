@@ -4,9 +4,9 @@ export function Stories() {
   return (
     <section id="stories" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۴ — صدای همراهان</p>
+        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۵ — صدای شبکه</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          کلاس، جلسه خصوصی و رشد دیجیتال روی یک مسیر.
+          شاگرد، مربی شهر دیگر، ارجاع از کیش.
         </h2>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">

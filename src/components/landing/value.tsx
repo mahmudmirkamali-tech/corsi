@@ -1,16 +1,16 @@
-import { FOUNDER, PERSONAS } from "@/lib/site";
+import { PERSONAS } from "@/lib/site";
 
 export function Value() {
   return (
     <section id="value" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۱ — پیشنهاد ارزش</p>
+        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۱ — مسیر</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          سه نقش، یک میز کار. ابزارها دیگر از هم جدا نیستند.
+          شاگرد می‌خواهد. مربی می‌پذیرد. پشتیبان ارجاع می‌دهد.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          مدرس دانشگاه سیلابس می‌نویسد، آموزگار خصوصی جلسه می‌گیرد، مدیر امور دیجیتال رشد می‌خواهد.
-          آتیسا این سه جریان را روی کرسی {FOUNDER.shortName} می‌نشاند تا آموزش و بازاریابی دیجیتال پراکنده نشود.
+          شبکه سراسری است، اما درِ کلاس دست معلم کیش است. بدون احراز هویت مربی و بدون ارجاع محمود،
+          پرداخت و جلسه انجام نمی‌شود.
         </p>
 
         <div className="mt-10 grid gap-4 md:grid-cols-3">

@@ -59,10 +59,10 @@ export function SiteNav() {
             size="sm"
             className={onInk ? "text-ink-foreground hover:bg-ink-foreground/10" : undefined}
           >
-            <a href="#signup">ورود به فهرست انتظار</a>
+            <a href="#signup">ثبت‌نام مربی</a>
           </Button>
           <Button asChild size="sm" variant={onInk ? "inverted" : "default"}>
-            <a href="#signup">شروع رایگان</a>
+            <a href="#signup">درخواست مربی</a>
           </Button>
         </div>
         <Button
@@ -98,7 +98,7 @@ export function SiteNav() {
             ))}
             <Button asChild className="mt-2 w-full" variant={onInk ? "inverted" : "default"}>
               <a href="#signup" onClick={() => setOpen(false)}>
-                شروع رایگان
+                درخواست مربی
               </a>
             </Button>
           </nav>

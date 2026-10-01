@@ -4,13 +4,13 @@ export function Instructor() {
   return (
     <section id="instructor" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۰ — مدرس</p>
+        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۰ — معلم</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          یک کرسی، با چهره و سابقه واقعی.
+          پشتیبان شهر کیش. ارجاع مربی فقط با او.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          متخصص دیجیتال مارکتینگ و توسعه وب؛ مدرس مهارت در هوش مصنوعی، بلاک‌چین و فناوری‌های نوین
-          اطلاعاتی. دقیق، نتیجه‌محور، و متمرکز روی اجرای پروژه در فضای کسب‌وکار ایران.
+          معلم است، نه بازار بی‌حفاظ. مربی از هر شهر می‌تواند بیاید؛ تا احراز نشود و محمود ارجاع ندهد،
+          جلسه‌ای شروع نمی‌شود.
         </p>
 
         <div className="mt-10 grid gap-4 lg:grid-cols-12">
@@ -53,11 +53,11 @@ export function Instructor() {
         <figure className="mt-4 overflow-hidden rounded-xl bg-surface shadow-[var(--shadow-border)]">
           <img
             src="/media/credential.jpg"
-            alt={`گواهینامه پایان دوره مهارتی ${FOUNDER.name}، ${FOUNDER.university}`}
+            alt={`گواهینامه پایان دوره مهارتی ${FOUNDER.name}`}
             className="w-full object-cover outline outline-1 -outline-offset-1 outline-foreground/10"
           />
           <figcaption className="px-5 py-4 text-sm text-muted-foreground">
-            گواهینامه پایان دوره مهارتی · {FOUNDER.role} · {FOUNDER.university}
+            گواهینامه پایان دوره مهارتی · مدرس عالی مهارت و کارآفرینی · {FOUNDER.university}
           </figcaption>
         </figure>
       </div>

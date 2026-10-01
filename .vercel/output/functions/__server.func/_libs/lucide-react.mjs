@@ -108,53 +108,6 @@ var BookOpen = createLucideIcon("book-open", [["path", {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var CalendarClock = createLucideIcon("calendar-clock", [
-	["path", {
-		d: "M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5",
-		key: "1osxxc"
-	}],
-	["path", {
-		d: "M16 2v4",
-		key: "4m81vk"
-	}],
-	["path", {
-		d: "M8 2v4",
-		key: "1cmpym"
-	}],
-	["path", {
-		d: "M3 10h5",
-		key: "r794hk"
-	}],
-	["path", {
-		d: "M17.5 17.5 16 16.3V14",
-		key: "akvzfd"
-	}],
-	["circle", {
-		cx: "16",
-		cy: "16",
-		r: "6",
-		key: "qoo3c4"
-	}]
-]);
-/**
-* @license lucide-react v0.510.0 - ISC
-*
-* This source code is licensed under the ISC license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var ChartLine = createLucideIcon("chart-line", [["path", {
-	d: "M3 3v16a2 2 0 0 0 2 2h16",
-	key: "c24i48"
-}], ["path", {
-	d: "m19 9-5 5-4-4-3 3",
-	key: "2osh9i"
-}]]);
-/**
-* @license lucide-react v0.510.0 - ISC
-*
-* This source code is licensed under the ISC license.
-* See the LICENSE file in the root directory of this source tree.
-*/
 var Check = createLucideIcon("check", [["path", {
 	d: "M20 6 9 17l-5-5",
 	key: "1gmf2c"
@@ -180,26 +133,15 @@ var CircleCheck = createLucideIcon("circle-check", [["circle", {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var Earth = createLucideIcon("earth", [
-	["path", {
-		d: "M21.54 15H17a2 2 0 0 0-2 2v4.54",
-		key: "1djwo0"
-	}],
-	["path", {
-		d: "M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17",
-		key: "1tzkfa"
-	}],
-	["path", {
-		d: "M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05",
-		key: "14pb5j"
-	}],
-	["circle", {
-		cx: "12",
-		cy: "12",
-		r: "10",
-		key: "1mglay"
-	}]
-]);
+var MapPin = createLucideIcon("map-pin", [["path", {
+	d: "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",
+	key: "1r0f0z"
+}], ["circle", {
+	cx: "12",
+	cy: "10",
+	r: "3",
+	key: "ilqhr7"
+}]]);
 /**
 * @license lucide-react v0.510.0 - ISC
 *
@@ -259,6 +201,41 @@ var TriangleAlert = createLucideIcon("triangle-alert", [
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var UserCheck = createLucideIcon("user-check", [
+	["path", {
+		d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2",
+		key: "1yyitq"
+	}],
+	["circle", {
+		cx: "9",
+		cy: "7",
+		r: "4",
+		key: "nufk8"
+	}],
+	["polyline", {
+		points: "16 11 18 13 22 9",
+		key: "1pwet4"
+	}]
+]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var Wallet = createLucideIcon("wallet", [["path", {
+	d: "M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1",
+	key: "18etb6"
+}], ["path", {
+	d: "M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4",
+	key: "xoc0q4"
+}]]);
+/**
+* @license lucide-react v0.510.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var Waypoints = createLucideIcon("waypoints", [
 	["circle", {
 		cx: "12",
@@ -311,4 +288,4 @@ var X = createLucideIcon("x", [["path", {
 	key: "d8bk6v"
 }]]);
 //#endregion
-export { Menu as a, Check as c, BookOpen as d, ArrowLeft as f, ShieldCheck as i, ChartLine as l, Waypoints as n, Earth as o, TriangleAlert as r, CircleCheck as s, X as t, CalendarClock as u };
+export { TriangleAlert as a, MapPin as c, BookOpen as d, ArrowLeft as f, UserCheck as i, CircleCheck as l, Waypoints as n, ShieldCheck as o, Wallet as r, Menu as s, X as t, Check as u };

@@ -25,7 +25,7 @@ export function MobileCta() {
       )}
     >
       <Button asChild className="w-full" size="lg">
-        <a href="#signup">شروع رایگان</a>
+        <a href="#signup">درخواست مربی</a>
       </Button>
     </div>
   );

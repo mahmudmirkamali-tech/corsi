@@ -1,14 +1,7 @@
-import {
-  BookOpen,
-  CalendarClock,
-  Globe2,
-  LineChart,
-  MonitorSmartphone,
-  Waypoints,
-} from "lucide-react";
+import { BookOpen, MapPin, ShieldCheck, UserCheck, Wallet, Waypoints } from "lucide-react";
 import { FEATURES, FOUNDER, STEPS } from "@/lib/site";
 
-const ICONS = [BookOpen, CalendarClock, Waypoints, MonitorSmartphone, Globe2, LineChart];
+const ICONS = [BookOpen, ShieldCheck, UserCheck, Wallet, MapPin, Waypoints];
 
 export function Features() {
   return (
@@ -16,12 +9,10 @@ export function Features() {
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
         <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۲ — قابلیت‌ها</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          از سیلابس تا رشد برند، همه روی یک شبکه.
+          مربی سراسری، اعتماد محلی کیش.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          هر قابلیت برای کلاس، جلسه خصوصی و اداره دیجیتال کسب‌وکار طراحی شده — همان مسیری که
-          {` ${FOUNDER.shortName} `}
-          از ۱۳۹۹ در مشاوره و اجرا طی کرده است.
+          درخواست، احراز، ارجاع و پرداخت دوتو در یک مسیر. {FOUNDER.shortName} درِ ورود مربی را باز می‌کند.
         </p>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -44,8 +35,8 @@ export function Features() {
 
         <div className="mt-16 grid gap-8 overflow-hidden rounded-xl bg-ink text-ink-foreground md:grid-cols-2">
           <div className="flex flex-col justify-center p-8 md:p-10">
-            <p className="text-xs font-medium tracking-wide text-ink-foreground/55">مسیر شروع</p>
-            <h3 className="mt-2 text-2xl font-semibold tracking-tight">سه گام تا کرسی فعال</h3>
+            <p className="text-xs font-medium tracking-wide text-ink-foreground/55">سه گام</p>
+            <h3 className="mt-2 text-2xl font-semibold tracking-tight">تا کلاس آنلاین قطعی</h3>
             <ol className="mt-8 space-y-6">
               {STEPS.map((step) => (
                 <li key={step.n} className="grid grid-cols-[auto_1fr] gap-4">
@@ -61,7 +52,7 @@ export function Features() {
           <div className="relative min-h-64">
             <img
               src="/media/portrait-cafe.jpg"
-              alt={`${FOUNDER.name}، مشاور فناوری در جلسه کاری`}
+              alt={`${FOUNDER.name}، پشتیبان شهر کیش`}
               className="absolute inset-0 size-full object-cover object-top outline outline-1 -outline-offset-1 outline-ink-foreground/10"
             />
           </div>
