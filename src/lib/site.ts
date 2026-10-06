@@ -23,10 +23,10 @@ export const PAYMENT = {
 
 export const NAV_LINKS = [
   { href: "#instructor", label: "معلم" },
-  { href: "#value", label: "مسیر" },
   { href: "#features", label: "قابلیت‌ها" },
   { href: "#pricing", label: "قیمت" },
   { href: "#economy", label: "اقتصاد" },
+  { href: "#doto", label: "دوتو" },
   { href: "#signup", label: "درخواست" },
   { href: "#referral", label: "ارجاع" },
 ] as const;
@@ -72,7 +72,7 @@ export const FEATURES = [
   {
     id: "doto",
     title: "اقتصاد دوتو",
-    body: "شاگرد ۵ دوتو در ساعت می‌پردازد: ۴ به مربی، ۰٫۵ به پشتیبان کیش، ۰٫۵ به شبکه احراز و تسویه. بدون نرخ پنهان.",
+    body: "شاگرد ۵ دوتو در ساعت می‌پردازد: ۴ به مربی، ۰٫۵ به پشتیبان کیش، ۰٫۵ به شبکه. جلسه روی دات‌وان (Chain ID 505) توکنیزه می‌شود.",
   },
   {
     id: "cities",

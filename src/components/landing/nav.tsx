@@ -1,5 +1,6 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { TokenizeButton } from "@/components/landing/tokenize-button";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/landing/logo";
 import { NAV_LINKS } from "@/lib/site";
@@ -53,17 +54,7 @@ export function SiteNav() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 md:flex">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className={onInk ? "text-ink-foreground hover:bg-ink-foreground/10" : undefined}
-          >
-            <a href="#signup">ثبت‌نام مربی</a>
-          </Button>
-          <Button asChild size="sm" variant={onInk ? "inverted" : "default"}>
-            <a href="#signup">درخواست مربی</a>
-          </Button>
+          <TokenizeButton size="sm" variant={onInk ? "inverted" : "default"} />
         </div>
         <Button
           variant={onInk ? "inverted" : "outline"}
@@ -96,11 +87,7 @@ export function SiteNav() {
                 {link.label}
               </a>
             ))}
-            <Button asChild className="mt-2 w-full" variant={onInk ? "inverted" : "default"}>
-              <a href="#signup" onClick={() => setOpen(false)}>
-                درخواست مربی
-              </a>
-            </Button>
+            <TokenizeButton className="mt-2 w-full" variant={onInk ? "inverted" : "default"} />
           </nav>
         </div>
       ) : null}

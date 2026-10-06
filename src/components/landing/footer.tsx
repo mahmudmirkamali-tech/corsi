@@ -1,5 +1,5 @@
 import { Logo } from "@/components/landing/logo";
-import { FOUNDER, NAV_LINKS, PAYMENT } from "@/lib/site";
+import { FOUNDER, NAV_LINKS } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -8,8 +8,8 @@ export function SiteFooter() {
         <div>
           <Logo />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            شبکه مربی آنلاین با پشتیبان شهر کیش. هر ساعت ۵ دوتو: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه — روی{" "}
-            {PAYMENT.chain}.
+            شبکه مربی آنلاین با پشتیبان شهر کیش. هر ساعت ۵ دوتو روی دات‌وان (Chain ID 505) توکنیزه
+            می‌شود: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه.
           </p>
         </div>
         <div>

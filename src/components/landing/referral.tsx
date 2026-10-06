@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TokenizeButton } from "@/components/landing/tokenize-button";
 import { Button } from "@/components/ui/button";
 import { faNum } from "@/lib/economy";
 import { FOUNDER, PAYMENT } from "@/lib/site";
@@ -40,14 +41,17 @@ export function Referral() {
   return (
     <section id="referral" className="scroll-mt-20 border-b border-border">
       <div className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۷ — پنل پشتیبان کیش</p>
+        <p className="text-xs font-medium tracking-wide text-muted-foreground">۰۸ — پنل پشتیبان کیش</p>
         <h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl">
-          ارجاع، بعد تسویه دوتو.
+          ارجاع، تسویه، ضرب توکن دوتو.
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          {FOUNDER.shortName} مربی را ارجاع می‌دهد، سپس درخواست شاگرد را به مربی وصل می‌کند. همان لحظه
-          سهم مربی، کیش و شبکه در دفتر اقتصاد ثبت می‌شود.
+          {FOUNDER.shortName} مربی را ارجاع می‌دهد، سپس درخواست را تسویه می‌کند. همان لحظه توکن جلسه
+          ATISA ضرب و دوتو بین مربی، کیش و شبکه تقسیم می‌شود.
         </p>
+        <div className="mt-8">
+          <TokenizeButton />
+        </div>
 
         <dl className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Mini label="حجم تسویه‌شده" value={`${faNum(totals.total)} ${PAYMENT.ticker}`} />
@@ -137,7 +141,7 @@ export function Referral() {
                             if (coachId) settleSession(req.id, coachId);
                           }}
                         >
-                          تسویه
+                        تسویه و توکنیزه
                         </Button>
                       </div>
                     )}
@@ -158,8 +162,8 @@ export function Referral() {
                     {session.learnerName} ← {session.coachName} · {session.subject}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {faNum(session.hours)} ساعت · کل {faNum(session.total)} · مربی {faNum(session.coachShare)} ·
-                    کیش {faNum(session.kishShare)} · شبکه {faNum(session.networkShare)}
+                    {faNum(session.hours)} ساعت · {session.tokenId} · مربی {faNum(session.coachShare)} · کیش{" "}
+                    {faNum(session.kishShare)} · شبکه {faNum(session.networkShare)}
                   </p>
                 </li>
               ))}

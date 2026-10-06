@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { TokenizeButton } from "@/components/landing/tokenize-button";
 import { cn } from "@/lib/utils";
 
 export function MobileCta() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const target = document.getElementById("signup");
+    const target = document.getElementById("doto");
     if (!target) return;
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(!entry?.isIntersecting),
@@ -24,9 +24,7 @@ export function MobileCta() {
         visible ? "translate-y-0" : "translate-y-full",
       )}
     >
-      <Button asChild className="w-full" size="lg">
-        <a href="#signup">درخواست مربی</a>
-      </Button>
+      <TokenizeButton className="w-full" size="lg" />
     </div>
   );
 }

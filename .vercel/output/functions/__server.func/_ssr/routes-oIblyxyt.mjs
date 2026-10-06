@@ -1,12 +1,49 @@
 import { i as __toESM } from "../_runtime.mjs";
 import { n as require_react } from "../_libs/@radix-ui/react-compose-refs+[...].mjs";
-import { i as require_jsx_runtime, r as Slot, t as Root } from "../_libs/@radix-ui/react-label+[...].mjs";
+import { i as require_jsx_runtime, n as Slot, t as Root } from "../_libs/@radix-ui/react-label+[...].mjs";
+import { n as TSS_SERVER_FUNCTION, r as getServerFnById, t as createServerFn } from "./ssr.mjs";
+import { a as dotoTx, i as dotoAddress, n as TREASURY, o as readDotoBalance, r as addDotOneChain, s as shortAddr, t as DOTONE } from "./doto-CtzYHbiq.mjs";
 import { c as MapPin, d as BookOpen, f as ArrowLeft, i as UserCheck, l as CircleCheck, n as Waypoints, o as ShieldCheck, r as Wallet, s as Menu, t as X, u as Check } from "../_libs/lucide-react.mjs";
 import { n as clsx, t as cva } from "../_libs/class-variance-authority+clsx.mjs";
 import { t as twMerge } from "../_libs/tailwind-merge.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-ymHoWChR.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-oIblyxyt.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
+function cn(...inputs) {
+	return twMerge(clsx(inputs));
+}
+var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[background-color,color,box-shadow,transform,opacity] duration-150 ease-out focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 active:not-disabled:scale-[0.96] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
+	variants: {
+		variant: {
+			default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+			ink: "bg-ink text-ink-foreground hover:bg-ink/90",
+			surface: "bg-surface text-foreground shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)]",
+			outline: "border border-border bg-transparent text-foreground hover:bg-muted",
+			ghost: "text-foreground hover:bg-muted",
+			inverted: "bg-ink-foreground text-ink hover:bg-ink-foreground/90"
+		},
+		size: {
+			default: "h-11 min-h-11 px-5",
+			sm: "h-9 min-h-9 rounded-sm px-3",
+			lg: "h-12 min-h-12 px-6 text-base",
+			icon: "size-11 min-h-11 min-w-11"
+		}
+	},
+	defaultVariants: {
+		variant: "default",
+		size: "default"
+	}
+});
+function Button({ className, variant, size, asChild = false, ...props }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot : "button", {
+		className: cn(buttonVariants({
+			variant,
+			size,
+			className
+		})),
+		...props
+	});
+}
 var SPLIT = {
 	hourly: 5,
 	coach: 4,
@@ -27,6 +64,300 @@ var FA = "۰۱۲۳۴۵۶۷۸۹";
 function faNum(value) {
 	return (Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, "")).replace(/\d/g, (d) => FA[Number(d)] ?? d).replace(".", "٫");
 }
+var REQUESTS_KEY = "atisa-coach-requests";
+var COACHES_KEY = "atisa-coach-apps";
+var SESSIONS_KEY = "atisa-sessions";
+var TOKENS_KEY = "atisa-doto-tokens";
+var ACTIVITY_KEY = "atisa-doto-activity";
+var META_KEY = "atisa-doto-meta";
+var EVENT = "atisa-store";
+function notify() {
+	if (typeof window === "undefined") return;
+	window.dispatchEvent(new Event(EVENT));
+}
+function readList(key) {
+	if (typeof window === "undefined") return [];
+	try {
+		const raw = JSON.parse(localStorage.getItem(key) ?? "[]");
+		return Array.isArray(raw) ? raw : [];
+	} catch {
+		return [];
+	}
+}
+function writeList(key, items) {
+	if (typeof window === "undefined") return;
+	localStorage.setItem(key, JSON.stringify(items.slice(0, 80)));
+	notify();
+}
+function loadMeta() {
+	if (typeof window === "undefined") return {
+		block: 1000505,
+		tokenSeq: 0
+	};
+	try {
+		const raw = JSON.parse(localStorage.getItem(META_KEY) ?? "null");
+		if (raw && typeof raw.block === "number") return raw;
+	} catch {}
+	return {
+		block: 1000505,
+		tokenSeq: 0
+	};
+}
+function saveMeta(meta) {
+	if (typeof window === "undefined") return;
+	localStorage.setItem(META_KEY, JSON.stringify(meta));
+}
+function subscribeStore(onChange) {
+	window.addEventListener(EVENT, onChange);
+	return () => window.removeEventListener(EVENT, onChange);
+}
+function loadRequests() {
+	return readList(REQUESTS_KEY).map((item) => ({
+		...item,
+		status: item.status === "settled" ? "settled" : "open",
+		wallet: item.wallet || dotoAddress(item.email || item.name)
+	}));
+}
+function saveRequest(entry) {
+	const item = {
+		...entry,
+		status: "open",
+		wallet: dotoAddress(entry.email),
+		id: crypto.randomUUID(),
+		at: (/* @__PURE__ */ new Date()).toISOString()
+	};
+	writeList(REQUESTS_KEY, [item, ...loadRequests()]);
+	return item;
+}
+function loadCoaches() {
+	return readList(COACHES_KEY).map((item) => ({
+		...item,
+		wallet: item.wallet || dotoAddress(item.email || item.name)
+	}));
+}
+function saveCoach(entry) {
+	const item = {
+		...entry,
+		status: "pending",
+		wallet: dotoAddress(entry.email),
+		id: crypto.randomUUID(),
+		at: (/* @__PURE__ */ new Date()).toISOString()
+	};
+	writeList(COACHES_KEY, [item, ...loadCoaches()]);
+	return item;
+}
+function referCoach(id) {
+	const next = loadCoaches().map((coach) => coach.id === id ? {
+		...coach,
+		status: "approved"
+	} : coach);
+	writeList(COACHES_KEY, next);
+	return next;
+}
+function loadSessions() {
+	return readList(SESSIONS_KEY).map((item) => ({
+		...item,
+		tokenId: item.tokenId || "—",
+		txHash: item.txHash || "",
+		block: item.block || 0
+	}));
+}
+function loadTokens() {
+	return readList(TOKENS_KEY);
+}
+function loadActivity() {
+	return readList(ACTIVITY_KEY);
+}
+function pushActivity(items) {
+	writeList(ACTIVITY_KEY, [...items, ...loadActivity()]);
+}
+function settleSession(requestId, coachId) {
+	const request = loadRequests().find((item) => item.id === requestId);
+	const coach = loadCoaches().find((item) => item.id === coachId);
+	if (!request || request.status === "settled" || !coach || coach.status !== "approved") return null;
+	const ledger = splitHours(request.hours);
+	const meta = loadMeta();
+	const block = meta.block + 1;
+	const tokenSeq = meta.tokenSeq + 1;
+	const tokenId = `ATISA-${String(tokenSeq).padStart(4, "0")}`;
+	const mintTx = dotoTx(`${request.id}:${coach.id}:${tokenId}:${block}`);
+	const session = {
+		id: crypto.randomUUID(),
+		requestId,
+		coachId,
+		learnerName: request.name,
+		coachName: coach.name,
+		subject: request.subject,
+		hours: ledger.hours,
+		total: ledger.total,
+		coachShare: ledger.coach,
+		kishShare: ledger.kish,
+		networkShare: ledger.network,
+		tokenId,
+		txHash: mintTx,
+		block,
+		at: (/* @__PURE__ */ new Date()).toISOString()
+	};
+	const token = {
+		tokenId,
+		sessionId: session.id,
+		hours: ledger.hours,
+		doto: ledger.total,
+		subject: request.subject,
+		learner: request.name,
+		coach: coach.name,
+		learnerWallet: request.wallet,
+		coachWallet: coach.wallet,
+		txHash: mintTx,
+		block,
+		at: session.at
+	};
+	const payTx = dotoTx(`${mintTx}:split`);
+	const now = session.at;
+	const activities = [
+		{
+			id: crypto.randomUUID(),
+			kind: "mint",
+			label: `ضرب توکن جلسه ${tokenId}`,
+			from: TREASURY.network,
+			to: request.wallet,
+			amount: ledger.hours,
+			asset: "ATISA",
+			txHash: mintTx,
+			block,
+			at: now
+		},
+		{
+			id: crypto.randomUUID(),
+			kind: "pay",
+			label: "دستمزد مربی",
+			from: request.wallet,
+			to: coach.wallet,
+			amount: ledger.coach,
+			asset: "DOTO",
+			txHash: payTx,
+			block,
+			at: now
+		},
+		{
+			id: crypto.randomUUID(),
+			kind: "pay",
+			label: "سهم پشتیبان کیش",
+			from: request.wallet,
+			to: TREASURY.kish,
+			amount: ledger.kish,
+			asset: "DOTO",
+			txHash: payTx,
+			block,
+			at: now
+		},
+		{
+			id: crypto.randomUUID(),
+			kind: "pay",
+			label: "سهم شبکه",
+			from: request.wallet,
+			to: TREASURY.network,
+			amount: ledger.network,
+			asset: "DOTO",
+			txHash: payTx,
+			block,
+			at: now
+		}
+	];
+	saveMeta({
+		block,
+		tokenSeq
+	});
+	writeList(REQUESTS_KEY, loadRequests().map((item) => item.id === requestId ? {
+		...item,
+		status: "settled"
+	} : item));
+	writeList(SESSIONS_KEY, [session, ...loadSessions()]);
+	writeList(TOKENS_KEY, [token, ...loadTokens()]);
+	pushActivity(activities);
+	return session;
+}
+function tokenizeNow(hours = 1) {
+	let open = loadRequests().find((item) => item.status !== "settled");
+	let approved = loadCoaches().find((item) => item.status === "approved");
+	if (!approved) {
+		const pending = loadCoaches().find((item) => item.status === "pending");
+		if (pending) referCoach(pending.id);
+		else referCoach(saveCoach({
+			name: "مربی احرازشده کیش",
+			email: "coach@atisa.doto",
+			city: "کیش",
+			subject: "بلاک‌چین و دوتو"
+		}).id);
+		approved = loadCoaches().find((item) => item.status === "approved");
+	}
+	if (!open) open = saveRequest({
+		name: "شاگرد شبکه دوتو",
+		email: "learner@atisa.doto",
+		city: "کیش",
+		subject: "بلاک‌چین و دوتو",
+		hours
+	});
+	if (!open || !approved) throw new Error("برای تسویه، مربی ارجاع‌شده لازم است.");
+	const session = settleSession(open.id, approved.id);
+	if (!session) throw new Error("تسویه انجام نشد.");
+	return session;
+}
+function economyTotals() {
+	return loadSessions().reduce((acc, session) => ({
+		hours: acc.hours + session.hours,
+		total: acc.total + session.total,
+		coach: acc.coach + session.coachShare,
+		kish: acc.kish + session.kishShare,
+		network: acc.network + session.networkShare
+	}), {
+		hours: 0,
+		total: 0,
+		coach: 0,
+		kish: 0,
+		network: 0
+	});
+}
+function TokenizeButton({ size = "lg", variant = "default", className }) {
+	const [label, setLabel] = (0, import_react.useState)("تسویه و توکنیزه");
+	const [busy, setBusy] = (0, import_react.useState)(false);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+		type: "button",
+		size,
+		variant,
+		className,
+		disabled: busy,
+		onClick: () => {
+			setBusy(true);
+			try {
+				const session = tokenizeNow();
+				setLabel(`ضرب شد · ${session.tokenId}`);
+				document.getElementById("doto")?.scrollIntoView({
+					behavior: "smooth",
+					block: "start"
+				});
+			} catch (error) {
+				setLabel(error instanceof Error ? error.message : "تسویه انجام نشد");
+			} finally {
+				setBusy(false);
+			}
+		},
+		children: [label, /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, {})]
+	});
+}
+var createSsrRpc = (functionId) => {
+	const url = "/_serverFn/" + functionId;
+	const serverFnMeta = { id: functionId };
+	const fn = async (...args) => {
+		return (await getServerFnById(functionId, { origin: "server" }))(...args);
+	};
+	return Object.assign(fn, {
+		url,
+		serverFnMeta,
+		[TSS_SERVER_FUNCTION]: true
+	});
+};
+var getDotOneStatus = createServerFn({ method: "GET" }).handler(createSsrRpc("037a7356a08ddd6f88c724ccc4cff023ea3b7486dd6b04cac1af9adcc1cc4a97"));
 var FOUNDER = {
 	name: "سید محمود میرکمالی",
 	shortName: "محمود میرکمالی",
@@ -54,10 +385,6 @@ var NAV_LINKS = [
 		label: "معلم"
 	},
 	{
-		href: "#value",
-		label: "مسیر"
-	},
-	{
 		href: "#features",
 		label: "قابلیت‌ها"
 	},
@@ -68,6 +395,10 @@ var NAV_LINKS = [
 	{
 		href: "#economy",
 		label: "اقتصاد"
+	},
+	{
+		href: "#doto",
+		label: "دوتو"
 	},
 	{
 		href: "#signup",
@@ -129,7 +460,7 @@ var FEATURES = [
 	{
 		id: "doto",
 		title: "اقتصاد دوتو",
-		body: "شاگرد ۵ دوتو در ساعت می‌پردازد: ۴ به مربی، ۰٫۵ به پشتیبان کیش، ۰٫۵ به شبکه احراز و تسویه. بدون نرخ پنهان."
+		body: "شاگرد ۵ دوتو در ساعت می‌پردازد: ۴ به مربی، ۰٫۵ به پشتیبان کیش، ۰٫۵ به شبکه. جلسه روی دات‌وان (Chain ID 505) توکنیزه می‌شود."
 	},
 	{
 		id: "cities",
@@ -266,6 +597,258 @@ var CITIES = [
 	"بندرعباس",
 	"سایر / آنلاین"
 ];
+function DotoChain() {
+	const [status, setStatus] = (0, import_react.useState)(null);
+	const [tokens, setTokens] = (0, import_react.useState)([]);
+	const [activity, setActivity] = (0, import_react.useState)([]);
+	const [account, setAccount] = (0, import_react.useState)(null);
+	const [balance, setBalance] = (0, import_react.useState)(null);
+	const [walletMsg, setWalletMsg] = (0, import_react.useState)("");
+	function refresh() {
+		setTokens(loadTokens());
+		setActivity(loadActivity());
+	}
+	(0, import_react.useEffect)(() => {
+		refresh();
+		return subscribeStore(refresh);
+	}, []);
+	(0, import_react.useEffect)(() => {
+		getDotOneStatus().then(setStatus).catch(() => setStatus({
+			ok: false,
+			rpc: DOTONE.rpc,
+			block: null,
+			chainId: DOTONE.chainId
+		}));
+	}, []);
+	async function onConnect() {
+		setWalletMsg("");
+		try {
+			const addr = await addDotOneChain();
+			setAccount(addr);
+			const doto = await readDotoBalance(addr);
+			setBalance(doto);
+		} catch (error) {
+			setWalletMsg(error instanceof Error ? error.message : "اتصال کیف انجام نشد.");
+		}
+	}
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+		id: "doto",
+		className: "scroll-mt-20 border-b border-border",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "mx-auto max-w-6xl px-5 py-16 md:py-24",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "text-xs font-medium tracking-wide text-muted-foreground",
+					children: "۰۵ — شبکه دوتو"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl",
+					children: "فعالیت روی دات‌وان توکنیزه می‌شود."
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground",
+					children: [
+						"هر جلسهٔ ارجاع‌شده یک توکن ",
+						DOTONE.tokenName,
+						" می‌گیرد و پرداخت با کوین بومی ",
+						DOTONE.symbol,
+						" روی زنجیره ",
+						DOTONE.shortName,
+						" با شناسه ",
+						DOTONE.chainId,
+						" ثبت می‌شود. ",
+						FOUNDER.shortName,
+						" ارجاع می‌دهد؛ زنجیره تسویه را نگه می‌دارد."
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-8 flex flex-col gap-3 sm:flex-row",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, { size: "lg" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "outline",
+						size: "lg",
+						onClick: onConnect,
+						children: "اتصال کیف‌پول دات‌وان"
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
+					className: "mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Meta, {
+							label: "شبکه",
+							value: DOTONE.shortName,
+							hint: `Chain ID ${DOTONE.chainId}`
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Meta, {
+							label: "ارتفاع بلوک",
+							value: status?.ok && status.block != null ? faNum(status.block) : "آماده نود",
+							hint: status?.ok ? "نود عمومی پاسخ داد" : "دفتر محلی زنجیره ۵۰۵"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Meta, {
+							label: "کوین بومی",
+							value: DOTONE.symbol,
+							hint: `${DOTONE.decimals} رقم اعشار`
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Meta, {
+							label: "توکن جلسه",
+							value: DOTONE.tokenName,
+							hint: `${faNum(tokens.length)} ضرب‌شده`
+						})
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-4 grid gap-4 lg:grid-cols-12",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("article", {
+						className: "rounded-xl bg-ink p-6 text-ink-foreground shadow-[var(--shadow-border)] lg:col-span-5",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+								className: "text-lg font-semibold",
+								children: "کیف و خزانه دوتو"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "mt-2 text-sm text-ink-foreground/70",
+								children: "شبکه را به کیف اضافه کنید. اگر کیف در مرورگر نیست، خزانه کیش و شبکه همین‌جا فعال‌اند."
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {
+								className: "mt-5 w-full",
+								variant: "inverted"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								variant: "outline",
+								className: "mt-2 w-full border-ink-foreground/20 text-ink-foreground hover:bg-ink-foreground/10",
+								onClick: onConnect,
+								children: "اتصال کیف‌پول دات‌وان"
+							}),
+							account ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "mt-3 font-mono text-xs",
+								dir: "ltr",
+								children: [shortAddr(account), balance != null ? ` · ${balance} DOTO` : ""]
+							}) : null,
+							walletMsg ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "mt-3 text-sm text-ink-foreground/80",
+								role: "alert",
+								children: walletMsg
+							}) : null,
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
+								className: "mt-6 space-y-2 text-sm",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: ["خزانه کیش · ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									dir: "ltr",
+									children: shortAddr(TREASURY.kish)
+								})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", { children: ["خزانه شبکه · ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									dir: "ltr",
+									children: shortAddr(TREASURY.network)
+								})] })]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "mt-6 text-xs text-ink-foreground/55",
+								children: "کاوشگر: dotscan.one · RPC عمومی دات‌وان"
+							})
+						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("article", {
+						className: "rounded-xl bg-surface p-6 shadow-[var(--shadow-border)] lg:col-span-7",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+							className: "text-lg font-semibold",
+							children: "توکن‌های جلسه"
+						}), tokens.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "mt-4 text-sm text-muted-foreground",
+							children: "هنوز توکنی ضرب نشده. دکمه «تسویه و توکنیزه» را بزنید تا جلسه روی دات‌وان ثبت شود."
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+							className: "mt-4 space-y-3",
+							children: tokens.map((token) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+								className: "rounded-md border border-border p-3",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "flex flex-wrap items-baseline justify-between gap-2",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "font-medium",
+											children: token.tokenId
+										}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+											className: "text-xs tabular-nums text-muted-foreground",
+											children: ["بلوک ", faNum(token.block)]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+										className: "mt-1 text-sm text-muted-foreground",
+										children: [
+											token.learner,
+											" ← ",
+											token.coach,
+											" · ",
+											token.subject,
+											" · ",
+											faNum(token.hours),
+											" ساعت ·",
+											" ",
+											faNum(token.doto),
+											" DOTO"
+										]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+										className: "mt-2 font-mono text-xs text-muted-foreground",
+										dir: "ltr",
+										children: shortAddr(token.txHash)
+									})
+								]
+							}, token.tokenId))
+						})]
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("article", {
+					className: "mt-4 rounded-xl bg-surface p-6 shadow-[var(--shadow-border)]",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						className: "text-lg font-semibold",
+						children: "دفتر فعالیت زنجیره"
+					}), activity.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-4 text-sm text-muted-foreground",
+						children: "پس از تسویه، ضرب توکن و انتقال دوتو اینجا می‌آید."
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+						className: "mt-4 space-y-3",
+						children: activity.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+							className: "grid gap-1 border-b border-border pb-3 last:border-0 sm:grid-cols-[1fr_auto]",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+								className: "text-sm font-medium",
+								children: item.label
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "mt-1 font-mono text-xs text-muted-foreground",
+								dir: "ltr",
+								children: [
+									shortAddr(item.from),
+									" → ",
+									shortAddr(item.to)
+								]
+							})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+								className: "text-sm tabular-nums",
+								children: [
+									faNum(item.amount),
+									" ",
+									item.asset
+								]
+							})]
+						}, item.id))
+					})]
+				})
+			]
+		})
+	});
+}
+function Meta({ label, value, hint }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "rounded-xl bg-surface px-4 py-4 shadow-[var(--shadow-border)]",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+				className: "text-xs text-muted-foreground",
+				children: label
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+				className: "mt-1 text-lg font-semibold tabular-nums",
+				children: value
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "mt-1 text-xs text-muted-foreground",
+				children: hint
+			})
+		]
+	});
+}
 function Economy() {
 	const [hours, setHours] = (0, import_react.useState)(5);
 	const ledger = (0, import_react.useMemo)(() => splitHours(hours), [hours]);
@@ -590,14 +1173,9 @@ function SiteFooter() {
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-3",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground",
-					children: [
-						"شبکه مربی آنلاین با پشتیبان شهر کیش. هر ساعت ۵ دوتو: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه — روی",
-						" ",
-						PAYMENT.chain,
-						"."
-					]
+					children: "شبکه مربی آنلاین با پشتیبان شهر کیش. هر ساعت ۵ دوتو روی دات‌وان (Chain ID 505) توکنیزه می‌شود: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه."
 				})] }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "text-sm font-medium",
@@ -644,9 +1222,6 @@ function SiteFooter() {
 		})]
 	});
 }
-function cn(...inputs) {
-	return twMerge(clsx(inputs));
-}
 var badgeVariants = cva("inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium tracking-wide", {
 	variants: { variant: {
 		default: "border-transparent bg-primary/10 text-primary",
@@ -658,38 +1233,6 @@ var badgeVariants = cva("inline-flex items-center rounded-full border px-3 py-1 
 function Badge({ className, variant, ...props }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 		className: cn(badgeVariants({ variant }), className),
-		...props
-	});
-}
-var buttonVariants = cva("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[background-color,color,box-shadow,transform,opacity] duration-150 ease-out focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 active:not-disabled:scale-[0.96] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
-	variants: {
-		variant: {
-			default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
-			ink: "bg-ink text-ink-foreground hover:bg-ink/90",
-			surface: "bg-surface text-foreground shadow-[var(--shadow-border)] hover:shadow-[var(--shadow-border-hover)]",
-			outline: "border border-border bg-transparent text-foreground hover:bg-muted",
-			ghost: "text-foreground hover:bg-muted",
-			inverted: "bg-ink-foreground text-ink hover:bg-ink-foreground/90"
-		},
-		size: {
-			default: "h-11 min-h-11 px-5",
-			sm: "h-9 min-h-9 rounded-sm px-3",
-			lg: "h-12 min-h-12 px-6 text-base",
-			icon: "size-11 min-h-11 min-w-11"
-		}
-	},
-	defaultVariants: {
-		variant: "default",
-		size: "default"
-	}
-});
-function Button({ className, variant, size, asChild = false, ...props }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(asChild ? Slot : "button", {
-		className: cn(buttonVariants({
-			variant,
-			size,
-			className
-		})),
 		...props
 	});
 }
@@ -731,7 +1274,7 @@ function Hero() {
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 							className: "mt-5 max-w-xl text-base leading-relaxed text-ink-foreground/75 md:text-lg",
 							children: [
-								"مربی آنلاین بخواهید. مربیان هر شهر پس از احراز می‌پذیرند؛ جلسه با ارجاع پشتیبان کیش قطعی می‌شود. اقتصاد روشن: ",
+								"مربی آنلاین بخواهید. مربیان هر شهر پس از احراز می‌پذیرند؛ جلسه با ارجاع پشتیبان کیش قطعی و روی شبکه دوتو توکنیزه می‌شود. اقتصاد روشن: ",
 								PAYMENT.hourly,
 								" ",
 								PAYMENT.coin,
@@ -739,15 +1282,10 @@ function Hero() {
 							]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "mt-8 flex flex-col gap-3 sm:flex-row",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								asChild: true,
-								variant: "inverted",
+							className: "mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {
 								size: "lg",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-									href: "#signup",
-									children: ["درخواست مربی", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ArrowLeft, {})]
-								})
+								variant: "inverted"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 								asChild: true,
 								variant: "outline",
@@ -755,7 +1293,7 @@ function Hero() {
 								className: "border-ink-foreground/20 text-ink-foreground hover:bg-ink-foreground/10",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
 									href: "#signup",
-									children: "ثبت‌نام مربی"
+									children: "درخواست مربی"
 								})
 							})]
 						})
@@ -883,7 +1421,7 @@ function Instructor() {
 function MobileCta() {
 	const [visible, setVisible] = (0, import_react.useState)(true);
 	(0, import_react.useEffect)(() => {
-		const target = document.getElementById("signup");
+		const target = document.getElementById("doto");
 		if (!target) return;
 		const observer = new IntersectionObserver(([entry]) => setVisible(!entry?.isIntersecting), { threshold: .2 });
 		observer.observe(target);
@@ -891,14 +1429,9 @@ function MobileCta() {
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: cn("fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 p-3 md:hidden", "transition-transform duration-200 ease-out", visible ? "translate-y-0" : "translate-y-full"),
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-			asChild: true,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {
 			className: "w-full",
-			size: "lg",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-				href: "#signup",
-				children: "درخواست مربی"
-			})
+			size: "lg"
 		})
 	});
 }
@@ -933,26 +1466,12 @@ function SiteNav() {
 						children: link.label
 					}, link.href))
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "hidden items-center gap-2 md:flex",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						asChild: true,
-						variant: "ghost",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {
 						size: "sm",
-						className: onInk ? "text-ink-foreground hover:bg-ink-foreground/10" : void 0,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "#signup",
-							children: "ثبت‌نام مربی"
-						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						asChild: true,
-						size: "sm",
-						variant: onInk ? "inverted" : "default",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							href: "#signup",
-							children: "درخواست مربی"
-						})
-					})]
+						variant: onInk ? "inverted" : "default"
+					})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					variant: onInk ? "inverted" : "outline",
@@ -976,15 +1495,9 @@ function SiteNav() {
 					className: "flex min-h-11 items-center rounded-md px-3 text-base",
 					onClick: () => setOpen(false),
 					children: link.label
-				}, link.href)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					asChild: true,
+				}, link.href)), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {
 					className: "mt-2 w-full",
-					variant: onInk ? "inverted" : "default",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-						href: "#signup",
-						onClick: () => setOpen(false),
-						children: "درخواست مربی"
-					})
+					variant: onInk ? "inverted" : "default"
 				})]
 			})
 		}) : null]
@@ -1072,113 +1585,6 @@ function Pricing() {
 		})
 	});
 }
-var REQUESTS_KEY = "atisa-coach-requests";
-var COACHES_KEY = "atisa-coach-apps";
-var SESSIONS_KEY = "atisa-sessions";
-var EVENT = "atisa-store";
-function notify() {
-	if (typeof window === "undefined") return;
-	window.dispatchEvent(new Event(EVENT));
-}
-function readList(key) {
-	if (typeof window === "undefined") return [];
-	try {
-		const raw = JSON.parse(localStorage.getItem(key) ?? "[]");
-		return Array.isArray(raw) ? raw : [];
-	} catch {
-		return [];
-	}
-}
-function writeList(key, items) {
-	if (typeof window === "undefined") return;
-	localStorage.setItem(key, JSON.stringify(items.slice(0, 80)));
-	notify();
-}
-function subscribeStore(onChange) {
-	window.addEventListener(EVENT, onChange);
-	return () => window.removeEventListener(EVENT, onChange);
-}
-function loadRequests() {
-	return readList(REQUESTS_KEY).map((item) => ({
-		...item,
-		status: item.status === "settled" ? "settled" : "open"
-	}));
-}
-function saveRequest(entry) {
-	const item = {
-		...entry,
-		status: "open",
-		id: crypto.randomUUID(),
-		at: (/* @__PURE__ */ new Date()).toISOString()
-	};
-	writeList(REQUESTS_KEY, [item, ...loadRequests()]);
-	return item;
-}
-function loadCoaches() {
-	return readList(COACHES_KEY);
-}
-function saveCoach(entry) {
-	const item = {
-		...entry,
-		status: "pending",
-		id: crypto.randomUUID(),
-		at: (/* @__PURE__ */ new Date()).toISOString()
-	};
-	writeList(COACHES_KEY, [item, ...loadCoaches()]);
-	return item;
-}
-function referCoach(id) {
-	const next = loadCoaches().map((coach) => coach.id === id ? {
-		...coach,
-		status: "approved"
-	} : coach);
-	writeList(COACHES_KEY, next);
-	return next;
-}
-function loadSessions() {
-	return readList(SESSIONS_KEY);
-}
-function settleSession(requestId, coachId) {
-	const request = loadRequests().find((item) => item.id === requestId);
-	const coach = loadCoaches().find((item) => item.id === coachId);
-	if (!request || request.status === "settled" || !coach || coach.status !== "approved") return null;
-	const ledger = splitHours(request.hours);
-	const session = {
-		id: crypto.randomUUID(),
-		requestId,
-		coachId,
-		learnerName: request.name,
-		coachName: coach.name,
-		subject: request.subject,
-		hours: ledger.hours,
-		total: ledger.total,
-		coachShare: ledger.coach,
-		kishShare: ledger.kish,
-		networkShare: ledger.network,
-		at: (/* @__PURE__ */ new Date()).toISOString()
-	};
-	writeList(REQUESTS_KEY, loadRequests().map((item) => item.id === requestId ? {
-		...item,
-		status: "settled"
-	} : item));
-	writeList(SESSIONS_KEY, [session, ...loadSessions()]);
-	return session;
-}
-function economyTotals() {
-	return loadSessions().reduce((acc, session) => ({
-		hours: acc.hours + session.hours,
-		total: acc.total + session.total,
-		coach: acc.coach + session.coachShare,
-		kish: acc.kish + session.kishShare,
-		network: acc.network + session.networkShare
-	}), {
-		hours: 0,
-		total: 0,
-		coach: 0,
-		kish: 0,
-		network: 0
-	});
-}
 function Referral() {
 	const [coaches, setCoaches] = (0, import_react.useState)([]);
 	const [requests, setRequests] = (0, import_react.useState)([]);
@@ -1205,15 +1611,19 @@ function Referral() {
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "text-xs font-medium tracking-wide text-muted-foreground",
-					children: "۰۷ — پنل پشتیبان کیش"
+					children: "۰۸ — پنل پشتیبان کیش"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 					className: "mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl",
-					children: "ارجاع، بعد تسویه دوتو."
+					children: "ارجاع، تسویه، ضرب توکن دوتو."
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground",
-					children: [FOUNDER.shortName, " مربی را ارجاع می‌دهد، سپس درخواست شاگرد را به مربی وصل می‌کند. همان لحظه سهم مربی، کیش و شبکه در دفتر اقتصاد ثبت می‌شود."]
+					children: [FOUNDER.shortName, " مربی را ارجاع می‌دهد، سپس درخواست را تسویه می‌کند. همان لحظه توکن جلسه ATISA ضرب و دوتو بین مربی، کیش و شبکه تقسیم می‌شود."]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "mt-8",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TokenizeButton, {})
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
 					className: "mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4",
@@ -1346,7 +1756,7 @@ function Referral() {
 											const coachId = pick[req.id] ?? approved[0]?.id;
 											if (coachId) settleSession(req.id, coachId);
 										},
-										children: "تسویه"
+										children: "تسویه و توکنیزه"
 									})]
 								})]
 							}, req.id))
@@ -1375,11 +1785,12 @@ function Referral() {
 								className: "text-xs text-muted-foreground",
 								children: [
 									faNum(session.hours),
-									" ساعت · کل ",
-									faNum(session.total),
+									" ساعت · ",
+									session.tokenId,
 									" · مربی ",
 									faNum(session.coachShare),
-									" · کیش ",
+									" · کیش",
+									" ",
 									faNum(session.kishShare),
 									" · شبکه ",
 									faNum(session.networkShare)
@@ -1522,7 +1933,7 @@ function Signup() {
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 								className: "text-xs font-medium tracking-wide text-ink-foreground/70",
-								children: "۰۶ — درخواست"
+								children: "۰۷ — درخواست"
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 								className: "mt-3 max-w-sm text-3xl font-semibold tracking-tight",
@@ -1725,7 +2136,7 @@ function Stories() {
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "text-xs font-medium tracking-wide text-muted-foreground",
-					children: "۰۵ — صدای شبکه"
+					children: "۰۶ — صدای شبکه"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 					className: "mt-3 max-w-2xl text-3xl font-semibold tracking-tight md:text-4xl",
@@ -1826,6 +2237,7 @@ function Home() {
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Features, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pricing, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Economy, {}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DotoChain, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Stories, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Signup, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Referral, {})

@@ -4,8 +4,8 @@ import { _ as createFileRoute, d as Scripts, f as HeadContent, g as lazyRouteCom
 import { i as require_jsx_runtime } from "../_libs/@radix-ui/react-label+[...].mjs";
 import { a as TriangleAlert } from "../_libs/lucide-react.mjs";
 import { a as union, i as string, n as number, r as object, t as literal } from "../_libs/zod.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-BbkS55Sn.js
-var router_BbkS55Sn_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
+//#region node_modules/.nitro/vite/services/ssr/assets/router-Bh2tixn8.js
+var router_Bh2tixn8_exports = /* @__PURE__ */ __exportAll({ getRouter: () => getRouter });
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var FALLBACK_MESSAGE = "An unexpected error occurred. Try reloading the page.";
@@ -299,9 +299,9 @@ function PreviewHostBridge() {
 	}, [router]);
 	return null;
 }
-var styles_default = "/assets/styles-C1OFhycR.css";
+var styles_default = "/assets/styles-CX-AHt1m.css";
 var APP_NAME = "آتیسا | سید محمود میرکمالی";
-var APP_DESCRIPTION = "شبکه مربی آنلاین با پشتیبان شهر کیش. نرخ ۵ دوتو در ساعت: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه. مربیان هر شهر پس از احراز و ارجاع سید محمود میرکمالی می‌پذیرند.";
+var APP_DESCRIPTION = "شبکه مربی آنلاین روی دات‌وان. نرخ ۵ دوتو در ساعت: ۴ مربی، ۰٫۵ کیش، ۰٫۵ شبکه. جلسه پس از ارجاع سید محمود میرکمالی توکنیزه می‌شود.";
 var Route$1 = createRootRoute({
 	head: () => ({
 		meta: [
@@ -355,7 +355,7 @@ var Route$1 = createRootRoute({
 		})]
 	})
 });
-var $$splitComponentImporter = () => import("./routes-ymHoWChR.mjs");
+var $$splitComponentImporter = () => import("./routes-oIblyxyt.mjs");
 var rootRouteChildren = { IndexRoute: createFileRoute("/")({ component: lazyRouteComponent($$splitComponentImporter, "component") }).update({
 	id: "/",
 	path: "/",
@@ -369,4 +369,4 @@ function getRouter() {
 	});
 }
 //#endregion
-export { getRouter, router_BbkS55Sn_exports as t };
+export { getRouter, router_Bh2tixn8_exports as t };

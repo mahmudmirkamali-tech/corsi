@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { DotoChain } from "@/components/landing/doto-chain";
 import { Economy } from "@/components/landing/economy";
 import { Features } from "@/components/landing/features";
 import { SiteFooter } from "@/components/landing/footer";
@@ -31,6 +32,7 @@ function Home() {
         <Features />
         <Pricing />
         <Economy />
+        <DotoChain />
         <Stories />
         <Signup />
         <Referral />

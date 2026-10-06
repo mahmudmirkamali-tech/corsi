@@ -113,7 +113,7 @@ export function Signup() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
           <div className="relative flex h-full min-h-72 flex-col justify-end p-8 text-ink-foreground md:p-10">
-            <p className="text-xs font-medium tracking-wide text-ink-foreground/70">۰۶ — درخواست</p>
+            <p className="text-xs font-medium tracking-wide text-ink-foreground/70">۰۷ — درخواست</p>
             <h2 className="mt-3 max-w-sm text-3xl font-semibold tracking-tight">
               شاگرد بخواهد. مربی بپذیرد. کیش ارجاع دهد.
             </h2>

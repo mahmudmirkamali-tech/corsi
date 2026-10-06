@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { TokenizeButton } from "@/components/landing/tokenize-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FOUNDER, PAYMENT, STATS } from "@/lib/site";
@@ -31,23 +31,13 @@ export function Hero() {
           <p className="mt-3 text-lg font-medium text-ink-foreground/90">{FOUNDER.headline}</p>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-ink-foreground/75 md:text-lg">
             مربی آنلاین بخواهید. مربیان هر شهر پس از احراز می‌پذیرند؛ جلسه با ارجاع پشتیبان کیش قطعی
-            می‌شود. اقتصاد روشن: {PAYMENT.hourly} {PAYMENT.coin} در ساعت — ۴ برای مربی، ۰٫۵ برای کیش،
-            ۰٫۵ برای شبکه.
+            و روی شبکه دوتو توکنیزه می‌شود. اقتصاد روشن: {PAYMENT.hourly} {PAYMENT.coin} در ساعت — ۴
+            برای مربی، ۰٫۵ برای کیش، ۰٫۵ برای شبکه.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="inverted" size="lg">
-              <a href="#signup">
-                درخواست مربی
-                <ArrowLeft />
-              </a>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-ink-foreground/20 text-ink-foreground hover:bg-ink-foreground/10"
-            >
-              <a href="#signup">ثبت‌نام مربی</a>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <TokenizeButton size="lg" variant="inverted" />
+            <Button asChild variant="outline" size="lg" className="border-ink-foreground/20 text-ink-foreground hover:bg-ink-foreground/10">
+              <a href="#signup">درخواست مربی</a>
             </Button>
           </div>
         </div>
